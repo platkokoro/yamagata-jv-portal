@@ -1,0 +1,1213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>山形県 データ活用周遊促進事業 JV 提案管理ポータル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Zen+Kaku+Gothic+New:wght@500;700;900&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --bg: #0d1117;
+    --bg2: #161b22;
+    --bg3: #1c2330;
+    --border: #30363d;
+    --text: #e6edf3;
+    --muted: #8b949e;
+    --accent: #4f46e5;
+    --accent-2: #6366f1;
+    --gold: #d4af37;
+
+    --st-done: #3fb950;
+    --st-wip:  #e3b341;
+    --st-fix:  #f78166;
+    --st-wait: #58a6ff;
+    --st-todo: #6e7681;
+
+    --rs-mid:  #58a6ff;
+    --rs-ana:  #e3b341;
+
+    --plat:    #4f46e5;
+    --yamagin: #3fb950;
+    --monte:   #f78166;
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans JP', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.6;
+  }
+  h1, h2, h3, h4, .title-font {
+    font-family: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
+    letter-spacing: 0.01em;
+  }
+
+  a { color: var(--accent-2); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* =============== Header =============== */
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: linear-gradient(135deg, #0d1117, #1a1040, #0d1117);
+    border-bottom: 1px solid var(--border);
+    backdrop-filter: blur(6px);
+  }
+  .header-inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .header-left { display: flex; flex-direction: column; gap: 4px; }
+  .header-title {
+    font-size: 20px;
+    font-weight: 900;
+    margin: 0;
+    color: var(--text);
+  }
+  .header-title .gold { color: var(--gold); text-shadow: 0 0 12px rgba(212,175,55,0.25); }
+  .header-sub {
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .jv-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    background: rgba(79,70,229,0.18);
+    color: #c7c3ff;
+    border: 1px solid rgba(79,70,229,0.45);
+  }
+  .last-update {
+    font-size: 11px;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* =============== Layout =============== */
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 24px 80px;
+  }
+
+  /* =============== Deadline cards =============== */
+  .deadline-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 16px 0 24px;
+  }
+  .dcard {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: transform 0.15s ease, border-color 0.15s ease;
+  }
+  .dcard:hover { transform: translateY(-2px); border-color: #444c56; }
+  .dcard.urgent {
+    border-color: rgba(247,129,102,0.65);
+    background: linear-gradient(135deg, rgba(247,129,102,0.08), var(--bg2));
+    box-shadow: 0 0 0 1px rgba(247,129,102,0.25) inset;
+  }
+  .dcard .dc-label {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+  }
+  .dcard .dc-date {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .dcard.urgent .dc-date { color: #ffb3a0; }
+  .dcard .dc-note {
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* =============== Tabs =============== */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    font-family: inherit;
+    white-space: nowrap;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active {
+    color: var(--text);
+    border-bottom-color: var(--accent);
+  }
+
+  /* =============== Info banner =============== */
+  .info-banner {
+    margin: 18px 0 16px;
+    background: linear-gradient(135deg, rgba(212,175,55,0.08), rgba(212,175,55,0.02));
+    border: 1px solid rgba(212,175,55,0.4);
+    border-left: 4px solid var(--gold);
+    border-radius: 8px;
+    padding: 12px 16px;
+    color: #f1e6bf;
+    font-size: 13px;
+    line-height: 1.65;
+  }
+  .info-banner strong { color: var(--gold); }
+
+  /* =============== Progress =============== */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 12px 0 14px;
+    flex-wrap: wrap;
+  }
+  .progress-label {
+    font-size: 12px;
+    color: var(--muted);
+    min-width: 140px;
+  }
+  .progress-label b { color: var(--text); font-weight: 700; }
+  .progress-bar {
+    flex: 1;
+    min-width: 200px;
+    height: 8px;
+    background: var(--bg3);
+    border-radius: 99px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+  }
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), var(--gold));
+    transition: width 0.4s ease;
+  }
+  .reset-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.15s ease;
+  }
+  .reset-btn:hover {
+    color: var(--st-fix);
+    border-color: var(--st-fix);
+    background: rgba(247,129,102,0.08);
+  }
+
+  /* =============== Tables =============== */
+  .tbl-wrap {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 18px;
+  }
+  .tbl-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  table.data {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    min-width: 720px;
+  }
+  table.data thead th {
+    background: var(--bg3);
+    color: var(--muted);
+    font-weight: 700;
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    font-size: 12px;
+    letter-spacing: 0.02em;
+    position: relative;
+  }
+  table.data th.col-plat    { border-top: 3px solid var(--plat); color: #c7c3ff; }
+  table.data th.col-yamagin { border-top: 3px solid var(--yamagin); color: #b5f0c2; }
+  table.data th.col-monte   { border-top: 3px solid var(--monte); color: #ffc4b2; }
+
+  table.data tbody td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: middle;
+  }
+  table.data tbody tr:last-child td { border-bottom: none; }
+  table.data tbody tr:hover { background: rgba(79,70,229,0.05); }
+
+  .doc-num {
+    display: inline-block;
+    min-width: 24px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-right: 4px;
+  }
+  .doc-name {
+    font-weight: 700;
+    color: var(--text);
+    font-size: 13px;
+  }
+  .doc-sub {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 2px;
+    line-height: 1.45;
+  }
+  .doc-tag {
+    display: inline-block;
+    margin-top: 4px;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    background: rgba(79,70,229,0.18);
+    color: #c7c3ff;
+    border: 1px solid rgba(79,70,229,0.35);
+    font-weight: 500;
+  }
+  .doc-tag.parts {
+    background: rgba(139,148,158,0.15);
+    color: var(--muted);
+    border-color: rgba(139,148,158,0.3);
+  }
+
+  .dash { color: var(--muted); font-size: 16px; }
+
+  /* =============== Status badges =============== */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 4px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    border: 1px solid transparent;
+    transition: transform 0.1s ease, filter 0.15s ease;
+    white-space: nowrap;
+    font-family: inherit;
+  }
+  .badge:hover { filter: brightness(1.15); transform: translateY(-1px); }
+  .badge:active { transform: translateY(0); }
+
+  .badge.done { background: rgba(63,185,80,0.18); color: var(--st-done); border-color: rgba(63,185,80,0.45); }
+  .badge.wip  { background: rgba(227,179,65,0.18); color: var(--st-wip); border-color: rgba(227,179,65,0.45); }
+  .badge.fix  { background: rgba(247,129,102,0.18); color: var(--st-fix); border-color: rgba(247,129,102,0.45); }
+  .badge.wait { background: rgba(88,166,255,0.18); color: var(--st-wait); border-color: rgba(88,166,255,0.45); }
+  .badge.todo { background: rgba(110,118,129,0.18); color: var(--st-todo); border-color: rgba(110,118,129,0.45); }
+
+  .badge.sdone { background: rgba(63,185,80,0.18); color: var(--st-done); border-color: rgba(63,185,80,0.45); }
+  .badge.mid   { background: rgba(88,166,255,0.18); color: var(--rs-mid); border-color: rgba(88,166,255,0.45); }
+  .badge.ana   { background: rgba(227,179,65,0.18); color: var(--rs-ana); border-color: rgba(227,179,65,0.45); }
+  .badge.pre   { background: rgba(110,118,129,0.18); color: var(--st-todo); border-color: rgba(110,118,129,0.45); }
+
+  /* =============== Legend =============== */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 10px 14px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .legend-item { display: inline-flex; align-items: center; gap: 6px; }
+  .legend-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    display: inline-block;
+  }
+
+  /* =============== Tab2 (monte) =============== */
+  .venue-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 11px;
+    border-radius: 4px;
+    background: rgba(79,70,229,0.18);
+    color: #c7c3ff;
+    border: 1px solid rgba(79,70,229,0.35);
+    font-weight: 600;
+  }
+  .round-cell { color: var(--gold); font-weight: 700; font-size: 12px; white-space: nowrap; }
+  .reason-cell { font-size: 12px; color: var(--muted); }
+  .match-opp { font-weight: 700; color: var(--text); }
+  .date-cell { font-variant-numeric: tabular-nums; color: var(--text); font-weight: 500; font-size: 12px; white-space: nowrap; }
+  .dow-cell { color: var(--muted); margin-left: 4px; }
+
+  /* =============== Tab3 (facilities) =============== */
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 14px 0 20px;
+  }
+  .filter-btn {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.15s ease;
+  }
+  .filter-btn:hover { color: var(--text); border-color: var(--accent); }
+  .filter-btn.active {
+    background: rgba(79,70,229,0.25);
+    color: #fff;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px rgba(79,70,229,0.2);
+  }
+
+  .facility {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 18px;
+  }
+  .facility.hidden { display: none; }
+  .facility-head {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .facility-name {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+    color: var(--text);
+  }
+  .facility-addr {
+    font-size: 12px;
+    color: var(--muted);
+    margin-left: 4px;
+  }
+  .fc-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    font-size: 11px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .fc-confirmed    { background: rgba(63,185,80,0.18); color: var(--st-done); border: 1px solid rgba(63,185,80,0.4); }
+  .fc-partial      { background: rgba(227,179,65,0.18); color: var(--st-wip); border: 1px solid rgba(227,179,65,0.4); }
+  .fc-unconfirmed  { background: rgba(247,129,102,0.18); color: var(--st-fix); border: 1px solid rgba(247,129,102,0.4); }
+
+  .facility-note {
+    margin: 10px 0 14px;
+    padding: 10px 14px;
+    background: var(--bg3);
+    border-left: 3px solid var(--gold);
+    border-radius: 4px;
+    font-size: 12px;
+    color: #d1d6de;
+    line-height: 1.7;
+  }
+  .facility-note a { word-break: break-all; }
+
+  .pri-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 11px;
+    border-radius: 4px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .pri-3 { background: rgba(247,129,102,0.18); color: var(--st-fix); border: 1px solid rgba(247,129,102,0.4); }
+  .pri-2 { background: rgba(227,179,65,0.18); color: var(--st-wip); border: 1px solid rgba(227,179,65,0.4); }
+  .pri-1 { background: rgba(110,118,129,0.18); color: var(--muted); border: 1px solid rgba(110,118,129,0.3); }
+
+  .type-cell { font-size: 11px; color: var(--muted); }
+
+  /* =============== Mobile =============== */
+  @media (max-width: 640px) {
+    main { padding: 14px 12px 60px; }
+    .header-inner { padding: 12px 14px; }
+    .header-title { font-size: 15px; }
+    .header-sub { font-size: 10px; }
+    .deadline-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .dcard .dc-date { font-size: 14px; }
+    .tab-btn { padding: 10px 12px; font-size: 12px; }
+    .facility { padding: 14px 14px; }
+    .facility-name { font-size: 15px; }
+    .progress-label { min-width: unset; }
+    table.data { font-size: 12px; }
+    .jv-badge, .last-update { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <h1 class="header-title">
+        <span class="gold">山形県</span>
+        データ活用周遊促進事業 JV 提案管理ポータル
+      </h1>
+      <div class="header-sub">
+        幹事社：プラットヨネザワ ／ 構成員：山形銀行・モンテディオ山形
+      </div>
+    </div>
+    <div class="header-right">
+      <span class="jv-badge">◆ 共同企業体（JV）</span>
+      <span class="last-update" id="lastUpdate">最終更新: ─</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Deadline cards -->
+  <section class="deadline-grid" aria-label="提出期限">
+    <div class="dcard urgent">
+      <span class="dc-label">🔴 参加申込 提出期限</span>
+      <span class="dc-date">4月21日（火）17:00</span>
+      <span class="dc-note">持参・郵送・電子メール</span>
+    </div>
+    <div class="dcard">
+      <span class="dc-label">📋 企画提案書 提出期限</span>
+      <span class="dc-date">4月30日（木）17:00</span>
+      <span class="dc-note">持参・郵送・電子メール</span>
+    </div>
+    <div class="dcard">
+      <span class="dc-label">📅 事業説明会</span>
+      <span class="dc-date">4月14日（火）14:00〜</span>
+      <span class="dc-note">県庁10階／事前申込必要</span>
+    </div>
+  </section>
+
+  <!-- Tabs -->
+  <nav class="tabs" role="tablist">
+    <button class="tab-btn active" data-tab="tab-docs"  role="tab">📋 提出書類進捗</button>
+    <button class="tab-btn"        data-tab="tab-monte" role="tab">⚽ モンテ試合調査</button>
+    <button class="tab-btn"        data-tab="tab-cult"  role="tab">🏛️ 文化芸術施設調査</button>
+  </nav>
+
+  <div class="info-banner">
+    <strong>操作方法：</strong> バッジをクリックするとステータスが循環します。書類：未着手→作成中→要修正→待機中→完了。調査：調査前→調査中→分析中→完了。状態はブラウザに自動保存されます。
+  </div>
+
+  <!-- ========== TAB 1 : 書類 ========== -->
+  <section id="tab-docs" class="tab-panel" role="tabpanel">
+    <div class="progress-wrap">
+      <span class="progress-label">書類進捗 <b id="docsProgText">0/0</b></span>
+      <div class="progress-bar"><div class="progress-fill" id="docsProgBar"></div></div>
+      <button class="reset-btn" id="docsReset">🔄 リセット</button>
+    </div>
+
+    <div class="tbl-wrap">
+      <div class="tbl-scroll">
+        <table class="data" id="docsTable">
+          <thead>
+            <tr>
+              <th style="min-width: 260px;">書類名</th>
+              <th style="min-width: 80px;">提出部数</th>
+              <th class="col-plat"    style="min-width: 110px;">プラットヨネザワ</th>
+              <th class="col-yamagin" style="min-width: 110px;">山形銀行</th>
+              <th class="col-monte"   style="min-width: 110px;">モンテディオ山形</th>
+            </tr>
+          </thead>
+          <tbody id="docsBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-todo)"></span>未着手</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-wip)"></span>作成中</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-fix)"></span>要修正</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-wait)"></span>待機中</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-done)"></span>完了</span>
+    </div>
+  </section>
+
+  <!-- ========== TAB 2 : モンテ ========== -->
+  <section id="tab-monte" class="tab-panel" role="tabpanel" style="display:none">
+    <div class="progress-wrap">
+      <span class="progress-label">試合調査進捗 <b id="monteProgText">0/0</b></span>
+      <div class="progress-bar"><div class="progress-fill" id="monteProgBar"></div></div>
+      <button class="reset-btn" id="monteReset">🔄 リセット</button>
+    </div>
+
+    <div class="tbl-wrap">
+      <div class="tbl-scroll">
+        <table class="data" id="monteTable">
+          <thead>
+            <tr>
+              <th style="min-width: 40px;">No.</th>
+              <th style="min-width: 110px;">開催日</th>
+              <th style="min-width: 220px;">対戦カード</th>
+              <th style="min-width: 80px;">会場</th>
+              <th style="min-width: 80px;">節</th>
+              <th style="min-width: 220px;">選定理由</th>
+              <th style="min-width: 110px;">調査ステータス</th>
+            </tr>
+          </thead>
+          <tbody id="monteBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-todo)"></span>調査前</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--rs-mid)"></span>調査中</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--rs-ana)"></span>分析中</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-done)"></span>完了</span>
+    </div>
+  </section>
+
+  <!-- ========== TAB 3 : 文化施設 ========== -->
+  <section id="tab-cult" class="tab-panel" role="tabpanel" style="display:none">
+    <div class="progress-wrap">
+      <span class="progress-label">文化施設調査進捗 <b id="cultProgText">0/0</b></span>
+      <div class="progress-bar"><div class="progress-fill" id="cultProgBar"></div></div>
+      <button class="reset-btn" id="cultReset">🔄 リセット</button>
+    </div>
+
+    <div class="filter-row" id="facilityFilter"></div>
+
+    <div id="facilityList"></div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-todo)"></span>調査前</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--rs-mid)"></span>調査中</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--rs-ana)"></span>分析中</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-done)"></span>完了</span>
+      <span class="legend-item" style="margin-left:auto;"><span class="pri-tag pri-3">★★★</span>&nbsp;高優先度</span>
+      <span class="legend-item"><span class="pri-tag pri-2">★★☆</span>&nbsp;中優先度</span>
+      <span class="legend-item"><span class="pri-tag pri-1">★☆☆</span>&nbsp;低優先度</span>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ============================================================
+   DATA
+============================================================ */
+const DOCS = [
+  {id:'d01', num:'①', name:'参加申込書',
+   sub:'03-1 JV参加申込書【様式1-2】',
+   jv:true, parts:false, copies:'1部',
+   init:{plat:'fix', yamagin:'todo', monte:'todo'}},
+
+  {id:'d02', num:'②', name:'応募資格要件に関する誓約書',
+   sub:'03-2 JV応募資格要件に関する誓約書【様式1-3】',
+   jv:false, parts:true, copies:'1部',
+   init:{plat:'fix', yamagin:'wait', monte:'todo'}},
+
+  {id:'d03', num:'②', name:'事業者概要書',
+   sub:'02-2【様式2】',
+   jv:false, parts:true, copies:'1部',
+   init:{plat:'wip', yamagin:'done', monte:'todo'}},
+
+  {id:'d04', num:'②', name:'会社概要パンフレット',
+   sub:'各社概要の分かるもの',
+   jv:false, parts:true, copies:'6部',
+   init:{plat:'done', yamagin:'wait', monte:'todo'}},
+
+  {id:'d05', num:'③', name:'共同企業体概要書',
+   sub:'03-3 JV概要書【様式2-2（JV）】',
+   jv:true, parts:false, copies:'1部',
+   init:{plat:'done', yamagin:'todo', monte:'todo'}},
+
+  {id:'d06', num:'④', name:'財務諸表',
+   sub:'損益計算書・貸借対照表（直前決算1年分）',
+   jv:false, parts:true, copies:'各1部',
+   init:{plat:'done', yamagin:'done', monte:'todo'}},
+
+  {id:'d07', num:'⑤', name:'登記事項証明書',
+   sub:'発行後3か月以内のもの',
+   jv:false, parts:true, copies:'1部',
+   init:{plat:'done', yamagin:'done', monte:'todo'}},
+
+  {id:'d08', num:'⑥', name:'山形県税の納税証明書',
+   sub:'滞納なし証明書（発行後3か月以内）',
+   jv:false, parts:true, copies:'1部',
+   init:{plat:'done', yamagin:'done', monte:'todo'}},
+
+  {id:'d09', num:'⑦', name:'消費税及び地方消費税の納税証明書',
+   sub:'未納なし証明書（発行後3か月以内）',
+   jv:false, parts:true, copies:'1部',
+   init:{plat:'done', yamagin:'done', monte:'todo'}},
+
+  {id:'d10', num:'⑧', name:'暴力団排除に関する誓約書',
+   sub:'02-4【別記様式第7号】',
+   jv:false, parts:true, copies:'1部',
+   init:{plat:'fix', yamagin:'done', monte:'todo'}},
+
+  {id:'d11', num:'⑨', name:'社会保険・労働保険状況一覧表',
+   sub:'02-5【別記様式第8号】＋加入証明書類の写し',
+   jv:false, parts:true, copies:'1部',
+   init:{plat:'fix', yamagin:'done', monte:'todo'}},
+
+  {id:'d12', num:'⑩', name:'委任状・印鑑証明',
+   sub:'02-3【様式3】※該当する場合のみ',
+   jv:false, parts:true, copies:'1部',
+   init:{plat:'fix', yamagin:'done', monte:'todo'}},
+
+  {id:'d13', num:'⑪', name:'企画提案書【様式4】',
+   sub:'04 企画提案書 / 仕様書に基づき作成',
+   jv:true, parts:false, copies:'6部',
+   init:{plat:'wip', yamagin:'todo', monte:'todo'}},
+
+  {id:'d14', num:'⑫', name:'共同企業体協定書',
+   sub:'03-4【参考様式】共同企業体協定書',
+   jv:true, parts:false, copies:'1部',
+   init:{plat:'todo', yamagin:'todo', monte:'todo'}},
+];
+
+const MATCHES = [
+  {id:'m01', date:'2025-03-09', dow:'日', opp:'ブラウブリッツ秋田',
+   round:'第4節', reason:'ホーム開幕戦。シーズン基準値の把握', init:'sdone'},
+  {id:'m02', date:'2025-03-23', dow:'日', opp:'徳島ヴォルティス',
+   round:'第6節', reason:'四国・アウェイチームの来場傾向', init:'sdone'},
+  {id:'m03', date:'2025-04-05', dow:'土', opp:'ジュビロ磐田',
+   round:'第8節', reason:'市町村応援デー（酒田・鶴岡等）', init:'sdone'},
+  {id:'m04', date:'2025-04-19', dow:'土', opp:'愛媛FC',
+   round:'第10節', reason:'四国・アウェイチームの来場傾向', init:'sdone'},
+  {id:'m05', date:'2025-05-03', dow:'土', opp:'北海道コンサドーレ札幌',
+   round:'第13節', reason:'GW期間中・広域来場パターン分析', init:'sdone'},
+  {id:'m06', date:'2025-05-06', dow:'火', opp:'大分トリニータ',
+   round:'第14節', reason:'九州・アウェイチームの来場傾向', init:'sdone'},
+  {id:'m07', date:'2025-05-25', dow:'日', opp:'ヴァンフォーレ甲府',
+   round:'第17節', reason:'中部地方・アウェイチームの来場傾向', init:'sdone'},
+  {id:'m08', date:'2025-06-15', dow:'日', opp:'ベガルタ仙台',
+   round:'第19節', reason:'みちのくダービー・最大動員・隣県来場', init:'sdone'},
+  {id:'m09', date:'2025-06-28', dow:'土', opp:'V・ファーレン長崎',
+   round:'第21節', reason:'九州・アウェイチームの来場傾向', init:'sdone'},
+  {id:'m10', date:'2025-07-12', dow:'土', opp:'ジェフユナイテッド千葉',
+   round:'第23節', reason:'夏休み前・ナイター・夕方興行の動向', init:'sdone'},
+  {id:'m11', date:'2025-08-10', dow:'日', opp:'水戸ホーリーホック',
+   round:'第25節', reason:'夏休み・ナイター・帰省客の居住距離', init:'sdone'},
+  {id:'m12', date:'2025-08-16', dow:'土', opp:'いわきFC',
+   round:'第26節', reason:'夏休み・東北対決・ナイター', init:'sdone'},
+  {id:'m13', date:'2025-08-30', dow:'土', opp:'サガン鳥栖',
+   round:'第28節', reason:'九州・アウェイチームの来場傾向', init:'mid'},
+  {id:'m14', date:'2025-09-14', dow:'日', opp:'カターレ富山',
+   round:'第29節', reason:'北陸・アウェイチームの来場傾向', init:'mid'},
+  {id:'m15', date:'2025-09-27', dow:'土', opp:'レノファ山口FC',
+   round:'第31節', reason:'中国地方・アウェイチームの来場傾向', init:'sdone'},
+  {id:'m16', date:'2025-10-19', dow:'日', opp:'ロアッソ熊本',
+   round:'第?節', reason:'九州・アウェイチームの来場傾向', init:'mid'},
+  {id:'m17', date:'2025-10-26', dow:'日', opp:'RB大宮アルディージャ',
+   round:'第?節', reason:'シーズン終盤・秋期・ファミリー層定着', init:'sdone'},
+  {id:'m18', date:'2025-11-09', dow:'日', opp:'FC今治',
+   round:'第?節', reason:'四国・アウェイチームの来場傾向', init:'sdone'},
+  {id:'m19', date:'2025-11-29', dow:'土', opp:'藤枝MYFC',
+   round:'最終節', reason:'ホーム最終戦・コアファン比率の把握', init:'sdone'},
+];
+
+const FACILITIES = [
+  {
+    id:'hall', key:'hall',
+    name:'やまぎん県民ホール', addr:'山形市旅篭町3丁目4-51',
+    confTag:'fc-confirmed', confLabel:'✅ ファクトチェック済み',
+    note:'エリア設定：半径400m（駐車場・バス停含む）。Agoop推奨調査日：玉置浩二（5/2）、浜田省吾（10/26〜27）、ディズニーオン・クラシック（11/2）、あいみょん（12/17）。県外来場者が多い全国ツアー・大型公演を優先。',
+    events:[
+      {id:'h01', label:'4月29日（火・祝）', event:'山形交響楽団特別演奏会（ドラゴンクエスト他）', type:'クラシック', pri:3, init:'sdone'},
+      {id:'h02', label:'5月2日（金）', event:'玉置浩二 × オーケストラ公演ツアー2025', type:'音楽コンサート', pri:3, init:'sdone'},
+      {id:'h03', label:'5月18日（日）', event:'Little Glee Monster 全国ライブツアー2025', type:'音楽コンサート', pri:2, init:'sdone'},
+      {id:'h04', label:'5月21日（水）', event:'中村勘九郎・七之助 新緑歌舞伎特別公演2025', type:'伝統芸能', pri:3, init:'sdone'},
+      {id:'h05', label:'6月8日（日）', event:"パルコ・プロデュース2025『星の降る時』", type:'演劇', pri:3, init:'sdone'},
+      {id:'h06', label:'6月29日（日）', event:'郷ひろみ 2025年コンサートツアー', type:'音楽コンサート', pri:3, init:'sdone'},
+      {id:'h07', label:'8月9日（土）', event:'石丸幹二 オーケストラコンサート2025', type:'クラシック・ミュージカル', pri:3, init:'sdone'},
+      {id:'h08', label:'9月6日（土）', event:'GRe4N BOYZ 2025年 全国ツアー', type:'音楽コンサート', pri:2, init:'todo'},
+      {id:'h09', label:'9月20日（土）', event:'AI 2025年 全国ツアー', type:'音楽コンサート', pri:2, init:'todo'},
+      {id:'h10', label:'9月26日（金）', event:'山内惠介コンサートツアー2025（25周年）', type:'音楽コンサート', pri:2, init:'todo'},
+      {id:'h11', label:'10月26日（日）', event:'浜田省吾 2025-2026 全国ホールツアー（1日目）', type:'音楽コンサート', pri:3, init:'sdone'},
+      {id:'h12', label:'10月27日（月）', event:'浜田省吾 2025-2026 全国ホールツアー（2日目）', type:'音楽コンサート', pri:3, init:'sdone'},
+      {id:'h13', label:'11月2日（日）', event:'ディズニーオン・クラシック〜まほうの夜の音楽会2025', type:'クラシック×エンタメ', pri:3, init:'sdone'},
+      {id:'h14', label:'12月12〜14日', event:"ミュージカル『SPY×FAMILY』", type:'ミュージカル', pri:3, init:'sdone'},
+      {id:'h15', label:'12月17日（水）', event:'あいみょん 2025年 ホールツアー', type:'音楽コンサート', pri:3, init:'sdone'},
+      {id:'h16', label:'12月19日（金）', event:'松山千春コンサートツアー2025秋', type:'音楽コンサート', pri:2, init:'todo'},
+    ]
+  },
+  {
+    id:'bunshokan', key:'bunshokan',
+    name:'文翔館（山形県郷土館）', addr:'山形市旅篭町3丁目4-51',
+    confTag:'fc-partial', confLabel:'⚠️ 一部確認済み',
+    note:'エリア設定：半径300m。常設展が年間公開。特定イベント日よりも「通常の週末」でのAgoop調査が層Aの行動把握に適している可能性あり。調査推奨：GW期間中の土日（5月3〜5日）、9月27日（歌とピアノのコンサート）。',
+    events:[
+      {id:'b01', label:'GW期間（5月3〜5日）', event:'GW観光目的来場（平常時ベンチマーク）', type:'観光・一般来館', pri:3, init:'todo'},
+      {id:'b02', label:'9月27日（土）', event:'歌とピアノのコンサート（議場ホール）', type:'音楽', pri:2, init:'todo'},
+      {id:'b03', label:'9月28日（日）', event:'ヨガ教室', type:'体験イベント', pri:1, init:'todo'},
+    ]
+  },
+  {
+    id:'art', key:'art',
+    name:'山形美術館', addr:'山形市大手町1-63',
+    confTag:'fc-confirmed', confLabel:'✅ ファクトチェック済み',
+    note:'エリア設定：半径300m。公式サイト：yamagata-art-museum.or.jp（TEL：023-622-3090）。調査推奨：古代エジプト美術館展（7〜8月）、富岡鉄斎展（12月13日）。夏季展は観光シーズン・県外集客力が高い。',
+    events:[
+      {id:'a01', label:'7月11日〜8月23日', event:'古代エジプト美術館展', type:'企画展', pri:3, init:'sdone'},
+      {id:'a02', label:'10月31日〜11月16日', event:'小野皓一 展', type:'企画展', pri:2, init:'todo'},
+      {id:'a03', label:'10月31日〜11月16日', event:'サイトユフジ 展', type:'企画展', pri:2, init:'todo'},
+      {id:'a04', label:'12月12日〜26年1月25日', event:'富岡鉄斎 紅花商人ゆかりの長谷川コレクション展', type:'企画展', pri:3, init:'sdone'},
+    ]
+  },
+  {
+    id:'okitama', key:'okitama',
+    name:'置賜文化ホール', addr:'長井市あら町6-69',
+    confTag:'fc-unconfirmed', confLabel:'❌ 未確認',
+    note:'エリア設定：半径500m（周辺駐車場が広いため広めに設定）。車来場が多いため駐車場エリアも含める。担当者が直接公式HPまたは電話で2025年度の主要公演日程を確認すること。公式サイト：https://www.okitama-cs.or.jp/bunka/　TEL：0238-84-6311',
+    events:[
+      {id:'ok01', label:'要確認', event:'2025年度主要公演（公式HP・電話で確認が必要）', type:'未確認', pri:2, init:'pre'},
+    ]
+  },
+  {
+    id:'museum', key:'museum',
+    name:'山形県立博物館', addr:'山形市霞城町1-8',
+    confTag:'fc-confirmed', confLabel:'✅ ファクトチェック済み',
+    note:'エリア設定：半径400m（霞城公園含む）。公式サイト：yamagata-museum.jp。最優先調査日：11月3日（文化の日・連休）広域来場者多。次点：8月上旬の土曜日（夏休みファミリー）。',
+    events:[
+      {id:'ms01', label:'5月31日〜8月31日', event:'プライム企画展「さくらんぼ〜山形県民、挑戦の結実〜」', type:'企画展', pri:2, init:'todo'},
+      {id:'ms02', label:'7月20日（日）', event:'国宝土偶「縄文の女神」展示解説会', type:'解説イベント', pri:3, init:'todo'},
+      {id:'ms03', label:'8月2日（土）', event:'特別イベント', type:'特別イベント', pri:2, init:'todo'},
+      {id:'ms04', label:'8月10日（日）', event:'国宝土偶「縄文の女神」展示解説会', type:'解説イベント', pri:3, init:'todo'},
+      {id:'ms05', label:'9月27日〜12月14日', event:'やまはくセレクション展', type:'企画展', pri:2, init:'todo'},
+      {id:'ms06', label:'11月3日（月・祝）', event:'国宝土偶「縄文の女神」展示解説会（文化の日）', type:'解説イベント', pri:3, init:'sdone'},
+    ]
+  },
+  {
+    id:'tact', key:'tact',
+    name:'荘銀タクト鶴岡', addr:'鶴岡市馬場町13-31',
+    confTag:'fc-partial', confLabel:'⚠️ 一部確認済み',
+    note:'エリア設定：参考調査（優先度は低め）。村山・置賜との比較データとして有用。公式サイト：https://takugin-tact-tsuruoka.jp/　秋以降のイベント情報は要確認。',
+    events:[
+      {id:'t01', label:'2月9日（日）', event:'スキマスイッチ 2024-2025 全国ツアー', type:'音楽コンサート', pri:3, init:'sdone'},
+      {id:'t02', label:'秋以降（要確認）', event:'要公式HP確認', type:'未確認', pri:2, init:'pre'},
+    ]
+  },
+];
+
+/* ============================================================
+   STATE CYCLES
+============================================================ */
+const DOC_CYCLE   = ['todo','wip','fix','wait','done'];
+const DOC_LABELS  = {todo:'未着手', wip:'作成中', fix:'要修正', wait:'待機中', done:'完了'};
+const DOC_ICONS   = {todo:'○', wip:'✎', fix:'!', wait:'⏸', done:'✓'};
+
+const SURV_CYCLE  = ['pre','mid','ana','sdone'];
+const SURV_LABELS = {pre:'調査前', mid:'調査中', ana:'分析中', sdone:'完了'};
+const SURV_ICONS  = {pre:'📅', mid:'📊', ana:'🔬', sdone:'✅'};
+
+const KEY_DOC   = 'prtl_doc_v3';
+const KEY_MONTE = 'prtl_monte_v3';
+const KEY_CULT  = 'prtl_cult_v3';
+const KEY_TS    = 'prtl_ts';
+
+/* ============================================================
+   STATE
+============================================================ */
+let docState = loadOrInit(KEY_DOC, () => {
+  const s = {};
+  DOCS.forEach(d => { s[d.id] = { ...d.init }; });
+  return s;
+});
+
+let monteState = loadOrInit(KEY_MONTE, () => {
+  const s = {};
+  MATCHES.forEach(m => { s[m.id] = m.init; });
+  return s;
+});
+
+let cultState = loadOrInit(KEY_CULT, () => {
+  const s = {};
+  FACILITIES.forEach(f => f.events.forEach(e => { s[e.id] = e.init; }));
+  return s;
+});
+
+function loadOrInit(key, init) {
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  const v = init();
+  save(key, v);
+  return v;
+}
+function save(key, v) {
+  try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {}
+}
+function touchTimestamp() {
+  const now = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const s = `${now.getFullYear()}/${pad(now.getMonth()+1)}/${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
+  try { localStorage.setItem(KEY_TS, s); } catch (e) {}
+  document.getElementById('lastUpdate').textContent = '最終更新: ' + s;
+}
+function loadTimestamp() {
+  const s = localStorage.getItem(KEY_TS);
+  if (s) document.getElementById('lastUpdate').textContent = '最終更新: ' + s;
+}
+
+/* ============================================================
+   TAB 1 : DOCS
+============================================================ */
+function renderDocs() {
+  const body = document.getElementById('docsBody');
+  body.innerHTML = '';
+  DOCS.forEach(doc => {
+    const tr = document.createElement('tr');
+
+    const st = docState[doc.id];
+    const cells = [];
+
+    // name cell
+    const nameTd = document.createElement('td');
+    nameTd.innerHTML = `
+      <div><span class="doc-num">${doc.num}</span><span class="doc-name">${escapeHtml(doc.name)}</span></div>
+      <div class="doc-sub">${escapeHtml(doc.sub)}</div>
+      <div>${doc.jv ? '<span class="doc-tag">JV全体</span>' : (doc.parts ? '<span class="doc-tag parts">構成員ごと</span>' : '')}</div>
+    `;
+    tr.appendChild(nameTd);
+
+    const copiesTd = document.createElement('td');
+    copiesTd.innerHTML = `<span style="font-size:12px;color:var(--muted);">${escapeHtml(doc.copies)}</span>`;
+    tr.appendChild(copiesTd);
+
+    ['plat','yamagin','monte'].forEach(org => {
+      const td = document.createElement('td');
+      if (doc.jv && org !== 'plat') {
+        td.innerHTML = '<span class="dash">ー</span>';
+      } else {
+        const cur = st[org];
+        const b = document.createElement('button');
+        b.className = 'badge ' + cur;
+        b.textContent = `${DOC_ICONS[cur]} ${DOC_LABELS[cur]}`;
+        b.addEventListener('click', () => cycleDoc(doc.id, org));
+        td.appendChild(b);
+      }
+      tr.appendChild(td);
+    });
+
+    body.appendChild(tr);
+  });
+  updateDocsProgress();
+}
+
+function cycleDoc(docId, org) {
+  const cur = docState[docId][org];
+  const idx = DOC_CYCLE.indexOf(cur);
+  docState[docId][org] = DOC_CYCLE[(idx + 1) % DOC_CYCLE.length];
+  save(KEY_DOC, docState);
+  touchTimestamp();
+  renderDocs();
+}
+
+function updateDocsProgress() {
+  let total = 0, done = 0;
+  DOCS.forEach(d => {
+    if (d.jv) {
+      total += 1;
+      if (docState[d.id].plat === 'done') done += 1;
+    } else {
+      ['plat','yamagin','monte'].forEach(o => {
+        total += 1;
+        if (docState[d.id][o] === 'done') done += 1;
+      });
+    }
+  });
+  document.getElementById('docsProgText').textContent = `${done}/${total}`;
+  document.getElementById('docsProgBar').style.width = total ? `${(done/total*100).toFixed(1)}%` : '0%';
+}
+
+document.getElementById('docsReset').addEventListener('click', () => {
+  if (!confirm('書類進捗をすべて初期値に戻しますか？')) return;
+  const s = {};
+  DOCS.forEach(d => { s[d.id] = { ...d.init }; });
+  docState = s;
+  save(KEY_DOC, docState);
+  touchTimestamp();
+  renderDocs();
+});
+
+/* ============================================================
+   TAB 2 : MONTE
+============================================================ */
+function renderMonte() {
+  const body = document.getElementById('monteBody');
+  body.innerHTML = '';
+  MATCHES.forEach((m, i) => {
+    const tr = document.createElement('tr');
+    const st = monteState[m.id];
+
+    tr.innerHTML = `
+      <td><span style="color:var(--muted);font-size:12px;">${i+1}</span></td>
+      <td><span class="date-cell">${escapeHtml(m.date)}</span><span class="dow-cell">(${escapeHtml(m.dow)})</span></td>
+      <td><span class="match-opp">モンテディオ山形 VS ${escapeHtml(m.opp)}</span></td>
+      <td><span class="venue-tag">NDスタ</span></td>
+      <td><span class="round-cell">${escapeHtml(m.round)}</span></td>
+      <td><span class="reason-cell">${escapeHtml(m.reason)}</span></td>
+    `;
+    const stTd = document.createElement('td');
+    const b = document.createElement('button');
+    b.className = 'badge ' + st;
+    b.textContent = `${SURV_ICONS[st]} ${SURV_LABELS[st]}`;
+    b.addEventListener('click', () => cycleMonte(m.id));
+    stTd.appendChild(b);
+    tr.appendChild(stTd);
+
+    body.appendChild(tr);
+  });
+  updateMonteProgress();
+}
+
+function cycleMonte(id) {
+  const cur = monteState[id];
+  const idx = SURV_CYCLE.indexOf(cur);
+  monteState[id] = SURV_CYCLE[(idx + 1) % SURV_CYCLE.length];
+  save(KEY_MONTE, monteState);
+  touchTimestamp();
+  renderMonte();
+}
+
+function updateMonteProgress() {
+  const total = MATCHES.length;
+  const done = MATCHES.filter(m => monteState[m.id] === 'sdone').length;
+  document.getElementById('monteProgText').textContent = `${done}/${total}`;
+  document.getElementById('monteProgBar').style.width = total ? `${(done/total*100).toFixed(1)}%` : '0%';
+}
+
+document.getElementById('monteReset').addEventListener('click', () => {
+  if (!confirm('試合調査ステータスをすべて初期値に戻しますか？')) return;
+  const s = {};
+  MATCHES.forEach(m => { s[m.id] = m.init; });
+  monteState = s;
+  save(KEY_MONTE, monteState);
+  touchTimestamp();
+  renderMonte();
+});
+
+/* ============================================================
+   TAB 3 : FACILITIES
+============================================================ */
+let currentFilter = 'all';
+
+function renderFacilityFilter() {
+  const box = document.getElementById('facilityFilter');
+  box.innerHTML = '';
+  const items = [{key:'all', name:'すべて'}].concat(FACILITIES.map(f => ({key:f.key, name:f.name})));
+  items.forEach(it => {
+    const b = document.createElement('button');
+    b.className = 'filter-btn' + (currentFilter === it.key ? ' active' : '');
+    b.textContent = it.name;
+    b.addEventListener('click', () => {
+      currentFilter = it.key;
+      renderFacilityFilter();
+      renderFacilities();
+    });
+    box.appendChild(b);
+  });
+}
+
+function renderFacilities() {
+  const list = document.getElementById('facilityList');
+  list.innerHTML = '';
+  FACILITIES.forEach(f => {
+    const card = document.createElement('section');
+    card.className = 'facility' + ((currentFilter === 'all' || currentFilter === f.key) ? '' : ' hidden');
+
+    const head = document.createElement('div');
+    head.className = 'facility-head';
+    head.innerHTML = `
+      <h3 class="facility-name">${escapeHtml(f.name)}</h3>
+      <span class="fc-badge ${f.confTag}">${escapeHtml(f.confLabel)}</span>
+      <span class="facility-addr">${escapeHtml(f.addr)}</span>
+    `;
+    card.appendChild(head);
+
+    const note = document.createElement('div');
+    note.className = 'facility-note';
+    note.innerHTML = linkifyUrls(escapeHtml(f.note));
+    card.appendChild(note);
+
+    // events table
+    const wrap = document.createElement('div');
+    wrap.className = 'tbl-wrap';
+    const scroll = document.createElement('div');
+    scroll.className = 'tbl-scroll';
+    const tbl = document.createElement('table');
+    tbl.className = 'data';
+    tbl.innerHTML = `
+      <thead>
+        <tr>
+          <th style="min-width:40px;">No.</th>
+          <th style="min-width:130px;">日付</th>
+          <th style="min-width:260px;">イベント名</th>
+          <th style="min-width:130px;">種別</th>
+          <th style="min-width:80px;">優先度</th>
+          <th style="min-width:110px;">調査ステータス</th>
+        </tr>
+      </thead>
+    `;
+    const tb = document.createElement('tbody');
+    f.events.forEach((e, i) => {
+      const st = cultState[e.id];
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span style="color:var(--muted);font-size:12px;">${i+1}</span></td>
+        <td><span class="date-cell">${escapeHtml(e.label)}</span></td>
+        <td><span style="font-weight:600;">${escapeHtml(e.event)}</span></td>
+        <td><span class="type-cell">${escapeHtml(e.type)}</span></td>
+        <td><span class="pri-tag pri-${e.pri}">${e.pri === 3 ? '★★★' : e.pri === 2 ? '★★☆' : '★☆☆'}</span></td>
+      `;
+      const td = document.createElement('td');
+      const b = document.createElement('button');
+      b.className = 'badge ' + st;
+      b.textContent = `${SURV_ICONS[st]} ${SURV_LABELS[st]}`;
+      b.addEventListener('click', () => cycleCult(e.id));
+      td.appendChild(b);
+      tr.appendChild(td);
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb);
+    scroll.appendChild(tbl);
+    wrap.appendChild(scroll);
+    card.appendChild(wrap);
+
+    // facility progress
+    const total = f.events.length;
+    const done = f.events.filter(e => cultState[e.id] === 'sdone').length;
+    const pct = total ? (done/total*100).toFixed(1) : 0;
+    const pg = document.createElement('div');
+    pg.className = 'progress-wrap';
+    pg.style.marginBottom = '0';
+    pg.innerHTML = `
+      <span class="progress-label">施設別進捗 <b>${done}/${total}</b></span>
+      <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    `;
+    card.appendChild(pg);
+
+    list.appendChild(card);
+  });
+  updateCultProgress();
+}
+
+function cycleCult(id) {
+  const cur = cultState[id];
+  const idx = SURV_CYCLE.indexOf(cur);
+  cultState[id] = SURV_CYCLE[(idx + 1) % SURV_CYCLE.length];
+  save(KEY_CULT, cultState);
+  touchTimestamp();
+  renderFacilities();
+}
+
+function updateCultProgress() {
+  let total = 0, done = 0;
+  FACILITIES.forEach(f => f.events.forEach(e => {
+    total += 1;
+    if (cultState[e.id] === 'sdone') done += 1;
+  }));
+  document.getElementById('cultProgText').textContent = `${done}/${total}`;
+  document.getElementById('cultProgBar').style.width = total ? `${(done/total*100).toFixed(1)}%` : '0%';
+}
+
+document.getElementById('cultReset').addEventListener('click', () => {
+  if (!confirm('文化施設調査ステータスをすべて初期値に戻しますか？')) return;
+  const s = {};
+  FACILITIES.forEach(f => f.events.forEach(e => { s[e.id] = e.init; }));
+  cultState = s;
+  save(KEY_CULT, cultState);
+  touchTimestamp();
+  renderFacilities();
+});
+
+/* ============================================================
+   TABS
+============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+    document.getElementById(btn.dataset.tab).style.display = 'block';
+  });
+});
+
+/* ============================================================
+   UTIL
+============================================================ */
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'
+  }[c]));
+}
+function linkifyUrls(html) {
+  return html.replace(/(https?:\/\/[^\s　]+)/g,
+    '<a href="$1" target="_blank" rel="noopener">$1</a>');
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+loadTimestamp();
+renderDocs();
+renderMonte();
+renderFacilityFilter();
+renderFacilities();
+</script>
+
+</body>
+</html>
