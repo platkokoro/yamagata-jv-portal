@@ -475,8 +475,97 @@
 
   .type-cell { font-size: 11px; color: var(--muted); }
 
+  /* =============== Persona (TAB 4) =============== */
+  .persona-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .persona-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .persona-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .persona-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed var(--border);
+  }
+  .persona-name {
+    font-family: 'Zen Kaku Gothic New', 'Noto Sans JP', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 0;
+    line-height: 1.4;
+  }
+  .persona-field {
+    display: flex;
+    gap: 10px;
+    font-size: 12px;
+    line-height: 1.6;
+  }
+  .persona-label {
+    flex: 0 0 84px;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 11px;
+    padding-top: 1px;
+  }
+  .persona-value {
+    flex: 1;
+    color: var(--text);
+  }
+  .persona-evidence {
+    margin-top: 4px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--border);
+    font-size: 11px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .persona-evidence b { color: var(--gold); font-weight: 700; margin-right: 4px; }
+
+  .badge.p-draft     { background: rgba(110,118,129,0.18); color: var(--st-todo); border-color: rgba(110,118,129,0.45); }
+  .badge.p-review    { background: rgba(227,179,65,0.18); color: var(--st-wip); border-color: rgba(227,179,65,0.45); }
+  .badge.p-confirmed { background: rgba(63,185,80,0.18); color: var(--st-done); border-color: rgba(63,185,80,0.45); }
+
+  /* =============== Other events (TAB 5) =============== */
+  .type-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 11px;
+    border-radius: 4px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .type-tour    { background: rgba(88,166,255,0.18); color: var(--rs-mid); border: 1px solid rgba(88,166,255,0.4); }
+  .type-sports  { background: rgba(247,129,102,0.18); color: var(--st-fix); border: 1px solid rgba(247,129,102,0.4); }
+  .type-food    { background: rgba(63,185,80,0.18); color: var(--st-done); border: 1px solid rgba(63,185,80,0.4); }
+  .type-collab  { background: rgba(139,92,246,0.22); color: #c4b5fd; border: 1px solid rgba(139,92,246,0.5); }
+  .type-policy  { background: rgba(139,148,158,0.18); color: var(--muted); border: 1px solid rgba(139,148,158,0.4); }
+
+  .area-cell { font-size: 12px; color: var(--text); white-space: nowrap; }
+  .memo-cell { font-size: 12px; color: var(--muted); line-height: 1.55; }
+
+  .badge.o-draft  { background: rgba(110,118,129,0.18); color: var(--st-todo); border-color: rgba(110,118,129,0.45); }
+  .badge.o-review { background: rgba(227,179,65,0.18); color: var(--st-wip); border-color: rgba(227,179,65,0.45); }
+  .badge.o-active { background: rgba(88,166,255,0.18); color: var(--rs-mid); border-color: rgba(88,166,255,0.45); }
+  .badge.o-done   { background: rgba(63,185,80,0.18); color: var(--st-done); border-color: rgba(63,185,80,0.45); }
+
   /* =============== Mobile =============== */
   @media (max-width: 640px) {
+    .persona-grid { grid-template-columns: 1fr; }
     main { padding: 14px 12px 60px; }
     .header-inner { padding: 12px 14px; }
     .header-title { font-size: 15px; }
@@ -538,9 +627,11 @@
 
   <!-- Tabs -->
   <nav class="tabs" role="tablist">
-    <button class="tab-btn active" data-tab="tab-docs"  role="tab">📋 提出書類進捗</button>
-    <button class="tab-btn"        data-tab="tab-monte" role="tab">⚽ モンテ試合調査</button>
-    <button class="tab-btn"        data-tab="tab-cult"  role="tab">🏛️ 文化芸術施設調査</button>
+    <button class="tab-btn active" data-tab="tab-docs"    role="tab">📋 提出書類の進捗</button>
+    <button class="tab-btn"        data-tab="tab-monte"   role="tab">⚽ モンテディオ</button>
+    <button class="tab-btn"        data-tab="tab-cult"    role="tab">🏛️ 文化施設</button>
+    <button class="tab-btn"        data-tab="tab-persona" role="tab">🧑‍🤝‍🧑 提案書の仮ペルソナ設定に活用</button>
+    <button class="tab-btn"        data-tab="tab-other"   role="tab">📅 その他・イベント</button>
   </nav>
 
   <div class="info-banner">
@@ -639,6 +730,62 @@
     </div>
   </section>
 
+  <!-- ========== TAB 4 : PERSONA ========== -->
+  <section id="tab-persona" class="tab-panel" role="tabpanel" style="display:none">
+    <div class="info-banner" style="margin-top:18px;">
+      このタブは、<strong>Agoop調査結果</strong>から浮かび上がった来訪者像を「仮ペルソナ」として整理し、提案書の戦略立案に活用するためのワークスペースです。ペルソナは随時編集・保存できます。
+    </div>
+    <div class="persona-grid" id="personaGrid"></div>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-todo)"></span>仮設定</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-wip)"></span>検討中</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-done)"></span>確定</span>
+    </div>
+  </section>
+
+  <!-- ========== TAB 5 : OTHER EVENTS ========== -->
+  <section id="tab-other" class="tab-panel" role="tabpanel" style="display:none">
+    <div class="info-banner" style="margin-top:18px;">
+      文化施設・サッカー以外で県内周遊に関連する<strong>イベント・施策・連携候補</strong>を記録するメモエリアです。
+    </div>
+    <div class="progress-wrap">
+      <span class="progress-label">その他進捗 <b id="otherProgText">0/0</b></span>
+      <div class="progress-bar"><div class="progress-fill" id="otherProgBar"></div></div>
+      <button class="reset-btn" id="otherReset">🔄 リセット</button>
+    </div>
+
+    <div class="tbl-wrap">
+      <div class="tbl-scroll">
+        <table class="data" id="otherTable">
+          <thead>
+            <tr>
+              <th style="min-width:40px;">No.</th>
+              <th style="min-width:110px;">開催日</th>
+              <th style="min-width:260px;">イベント・施策名</th>
+              <th style="min-width:100px;">種別</th>
+              <th style="min-width:140px;">関連地域</th>
+              <th style="min-width:260px;">メモ</th>
+              <th style="min-width:110px;">ステータス</th>
+            </tr>
+          </thead>
+          <tbody id="otherBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-todo)"></span>未着手</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-wip)"></span>検討中</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--rs-mid)"></span>対応中</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--st-done)"></span>完了</span>
+      <span class="legend-item" style="margin-left:auto;"><span class="type-tag type-tour">観光</span></span>
+      <span class="legend-item"><span class="type-tag type-sports">スポーツ</span></span>
+      <span class="legend-item"><span class="type-tag type-food">食・農業</span></span>
+      <span class="legend-item"><span class="type-tag type-collab">連携候補</span></span>
+      <span class="legend-item"><span class="type-tag type-policy">行政施策</span></span>
+    </div>
+  </section>
+
 </main>
 
 <script>
@@ -649,22 +796,22 @@ const DOCS = [
   {id:'d01', num:'①', name:'参加申込書',
    sub:'03-1 JV参加申込書【様式1-2】',
    jv:true, parts:false, copies:'1部',
-   init:{plat:'fix', yamagin:'todo', monte:'todo'}},
+   init:{plat:'done', yamagin:'todo', monte:'todo'}},
 
   {id:'d02', num:'②', name:'応募資格要件に関する誓約書',
    sub:'03-2 JV応募資格要件に関する誓約書【様式1-3】',
    jv:false, parts:true, copies:'1部',
-   init:{plat:'fix', yamagin:'wait', monte:'todo'}},
+   init:{plat:'done', yamagin:'todo', monte:'todo'}},
 
   {id:'d03', num:'②', name:'事業者概要書',
    sub:'02-2【様式2】',
    jv:false, parts:true, copies:'1部',
-   init:{plat:'wip', yamagin:'done', monte:'todo'}},
+   init:{plat:'done', yamagin:'done', monte:'todo'}},
 
   {id:'d04', num:'②', name:'会社概要パンフレット',
    sub:'各社概要の分かるもの',
    jv:false, parts:true, copies:'6部',
-   init:{plat:'done', yamagin:'wait', monte:'todo'}},
+   init:{plat:'done', yamagin:'wip', monte:'todo'}},
 
   {id:'d05', num:'③', name:'共同企業体概要書',
    sub:'03-3 JV概要書【様式2-2（JV）】',
@@ -674,37 +821,37 @@ const DOCS = [
   {id:'d06', num:'④', name:'財務諸表',
    sub:'損益計算書・貸借対照表（直前決算1年分）',
    jv:false, parts:true, copies:'各1部',
-   init:{plat:'done', yamagin:'done', monte:'todo'}},
+   init:{plat:'done', yamagin:'wip', monte:'todo'}},
 
   {id:'d07', num:'⑤', name:'登記事項証明書',
    sub:'発行後3か月以内のもの',
    jv:false, parts:true, copies:'1部',
-   init:{plat:'done', yamagin:'done', monte:'todo'}},
+   init:{plat:'done', yamagin:'wip', monte:'todo'}},
 
   {id:'d08', num:'⑥', name:'山形県税の納税証明書',
    sub:'滞納なし証明書（発行後3か月以内）',
    jv:false, parts:true, copies:'1部',
-   init:{plat:'done', yamagin:'done', monte:'todo'}},
+   init:{plat:'done', yamagin:'wip', monte:'todo'}},
 
   {id:'d09', num:'⑦', name:'消費税及び地方消費税の納税証明書',
    sub:'未納なし証明書（発行後3か月以内）',
    jv:false, parts:true, copies:'1部',
-   init:{plat:'done', yamagin:'done', monte:'todo'}},
+   init:{plat:'done', yamagin:'wip', monte:'todo'}},
 
   {id:'d10', num:'⑧', name:'暴力団排除に関する誓約書',
    sub:'02-4【別記様式第7号】',
    jv:false, parts:true, copies:'1部',
-   init:{plat:'fix', yamagin:'done', monte:'todo'}},
+   init:{plat:'done', yamagin:'wip', monte:'todo'}},
 
   {id:'d11', num:'⑨', name:'社会保険・労働保険状況一覧表',
    sub:'02-5【別記様式第8号】＋加入証明書類の写し',
    jv:false, parts:true, copies:'1部',
-   init:{plat:'fix', yamagin:'done', monte:'todo'}},
+   init:{plat:'done', yamagin:'wip', monte:'todo'}},
 
   {id:'d12', num:'⑩', name:'委任状・印鑑証明',
    sub:'02-3【様式3】※該当する場合のみ',
    jv:false, parts:true, copies:'1部',
-   init:{plat:'fix', yamagin:'done', monte:'todo'}},
+   init:{plat:'done', yamagin:'wip', monte:'todo'}},
 
   {id:'d13', num:'⑪', name:'企画提案書【様式4】',
    sub:'04 企画提案書 / 仕様書に基づき作成',
@@ -743,13 +890,13 @@ const MATCHES = [
   {id:'m12', date:'2025-08-16', dow:'土', opp:'いわきFC',
    round:'第26節', reason:'夏休み・東北対決・ナイター', init:'sdone'},
   {id:'m13', date:'2025-08-30', dow:'土', opp:'サガン鳥栖',
-   round:'第28節', reason:'九州・アウェイチームの来場傾向', init:'mid'},
+   round:'第28節', reason:'九州・アウェイチームの来場傾向', init:'sdone'},
   {id:'m14', date:'2025-09-14', dow:'日', opp:'カターレ富山',
-   round:'第29節', reason:'北陸・アウェイチームの来場傾向', init:'mid'},
+   round:'第29節', reason:'北陸・アウェイチームの来場傾向', init:'sdone'},
   {id:'m15', date:'2025-09-27', dow:'土', opp:'レノファ山口FC',
    round:'第31節', reason:'中国地方・アウェイチームの来場傾向', init:'sdone'},
   {id:'m16', date:'2025-10-19', dow:'日', opp:'ロアッソ熊本',
-   round:'第?節', reason:'九州・アウェイチームの来場傾向', init:'mid'},
+   round:'第?節', reason:'九州・アウェイチームの来場傾向', init:'sdone'},
   {id:'m17', date:'2025-10-26', dow:'日', opp:'RB大宮アルディージャ',
    round:'第?節', reason:'シーズン終盤・秋期・ファミリー層定着', init:'sdone'},
   {id:'m18', date:'2025-11-09', dow:'日', opp:'FC今治',
@@ -765,22 +912,22 @@ const FACILITIES = [
     confTag:'fc-confirmed', confLabel:'✅ ファクトチェック済み',
     note:'エリア設定：半径400m（駐車場・バス停含む）。Agoop推奨調査日：玉置浩二（5/2）、浜田省吾（10/26〜27）、ディズニーオン・クラシック（11/2）、あいみょん（12/17）。県外来場者が多い全国ツアー・大型公演を優先。',
     events:[
-      {id:'h01', label:'4月29日（火・祝）', event:'山形交響楽団特別演奏会（ドラゴンクエスト他）', type:'クラシック', pri:3, init:'sdone'},
+      {id:'h01', label:'4月29日（火・祝）', event:'山形交響楽団特別演奏会（ドラゴンクエスト他）', type:'クラシック', pri:3, init:'pre'},
       {id:'h02', label:'5月2日（金）', event:'玉置浩二 × オーケストラ公演ツアー2025', type:'音楽コンサート', pri:3, init:'sdone'},
-      {id:'h03', label:'5月18日（日）', event:'Little Glee Monster 全国ライブツアー2025', type:'音楽コンサート', pri:2, init:'sdone'},
-      {id:'h04', label:'5月21日（水）', event:'中村勘九郎・七之助 新緑歌舞伎特別公演2025', type:'伝統芸能', pri:3, init:'sdone'},
-      {id:'h05', label:'6月8日（日）', event:"パルコ・プロデュース2025『星の降る時』", type:'演劇', pri:3, init:'sdone'},
-      {id:'h06', label:'6月29日（日）', event:'郷ひろみ 2025年コンサートツアー', type:'音楽コンサート', pri:3, init:'sdone'},
-      {id:'h07', label:'8月9日（土）', event:'石丸幹二 オーケストラコンサート2025', type:'クラシック・ミュージカル', pri:3, init:'sdone'},
-      {id:'h08', label:'9月6日（土）', event:'GRe4N BOYZ 2025年 全国ツアー', type:'音楽コンサート', pri:2, init:'todo'},
-      {id:'h09', label:'9月20日（土）', event:'AI 2025年 全国ツアー', type:'音楽コンサート', pri:2, init:'todo'},
-      {id:'h10', label:'9月26日（金）', event:'山内惠介コンサートツアー2025（25周年）', type:'音楽コンサート', pri:2, init:'todo'},
+      {id:'h03', label:'5月18日（日）', event:'Little Glee Monster 全国ライブツアー2025', type:'音楽コンサート', pri:2, init:'pre'},
+      {id:'h04', label:'5月21日（水）', event:'中村勘九郎・七之助 新緑歌舞伎特別公演2025', type:'伝統芸能', pri:3, init:'pre'},
+      {id:'h05', label:'6月8日（日）', event:"パルコ・プロデュース2025『星の降る時』", type:'演劇', pri:3, init:'pre'},
+      {id:'h06', label:'6月29日（日）', event:'郷ひろみ 2025年コンサートツアー', type:'音楽コンサート', pri:3, init:'pre'},
+      {id:'h07', label:'8月9日（土）', event:'石丸幹二 オーケストラコンサート2025', type:'クラシック・ミュージカル', pri:3, init:'pre'},
+      {id:'h08', label:'9月6日（土）', event:'GRe4N BOYZ 2025年 全国ツアー', type:'音楽コンサート', pri:2, init:'pre'},
+      {id:'h09', label:'9月20日（土）', event:'AI 2025年 全国ツアー', type:'音楽コンサート', pri:2, init:'pre'},
+      {id:'h10', label:'9月26日（金）', event:'山内惠介コンサートツアー2025（25周年）', type:'音楽コンサート', pri:2, init:'pre'},
       {id:'h11', label:'10月26日（日）', event:'浜田省吾 2025-2026 全国ホールツアー（1日目）', type:'音楽コンサート', pri:3, init:'sdone'},
       {id:'h12', label:'10月27日（月）', event:'浜田省吾 2025-2026 全国ホールツアー（2日目）', type:'音楽コンサート', pri:3, init:'sdone'},
       {id:'h13', label:'11月2日（日）', event:'ディズニーオン・クラシック〜まほうの夜の音楽会2025', type:'クラシック×エンタメ', pri:3, init:'sdone'},
-      {id:'h14', label:'12月12〜14日', event:"ミュージカル『SPY×FAMILY』", type:'ミュージカル', pri:3, init:'sdone'},
+      {id:'h14', label:'12月12〜14日', event:"ミュージカル『SPY×FAMILY』", type:'ミュージカル', pri:3, init:'pre'},
       {id:'h15', label:'12月17日（水）', event:'あいみょん 2025年 ホールツアー', type:'音楽コンサート', pri:3, init:'sdone'},
-      {id:'h16', label:'12月19日（金）', event:'松山千春コンサートツアー2025秋', type:'音楽コンサート', pri:2, init:'todo'},
+      {id:'h16', label:'12月19日（金）', event:'松山千春コンサートツアー2025秋', type:'音楽コンサート', pri:2, init:'pre'},
     ]
   },
   {
@@ -790,8 +937,8 @@ const FACILITIES = [
     note:'エリア設定：半径300m。常設展が年間公開。特定イベント日よりも「通常の週末」でのAgoop調査が層Aの行動把握に適している可能性あり。調査推奨：GW期間中の土日（5月3〜5日）、9月27日（歌とピアノのコンサート）。',
     events:[
       {id:'b01', label:'GW期間（5月3〜5日）', event:'GW観光目的来場（平常時ベンチマーク）', type:'観光・一般来館', pri:3, init:'todo'},
-      {id:'b02', label:'9月27日（土）', event:'歌とピアノのコンサート（議場ホール）', type:'音楽', pri:2, init:'todo'},
-      {id:'b03', label:'9月28日（日）', event:'ヨガ教室', type:'体験イベント', pri:1, init:'todo'},
+      {id:'b02', label:'9月27日（土）', event:'歌とピアノのコンサート（議場ホール）', type:'音楽', pri:2, init:'pre'},
+      {id:'b03', label:'9月28日（日）', event:'ヨガ教室', type:'体験イベント', pri:1, init:'pre'},
     ]
   },
   {
@@ -801,8 +948,8 @@ const FACILITIES = [
     note:'エリア設定：半径300m。公式サイト：yamagata-art-museum.or.jp（TEL：023-622-3090）。調査推奨：古代エジプト美術館展（7〜8月）、富岡鉄斎展（12月13日）。夏季展は観光シーズン・県外集客力が高い。',
     events:[
       {id:'a01', label:'7月11日〜8月23日', event:'古代エジプト美術館展', type:'企画展', pri:3, init:'sdone'},
-      {id:'a02', label:'10月31日〜11月16日', event:'小野皓一 展', type:'企画展', pri:2, init:'todo'},
-      {id:'a03', label:'10月31日〜11月16日', event:'サイトユフジ 展', type:'企画展', pri:2, init:'todo'},
+      {id:'a02', label:'10月31日〜11月16日', event:'小野皓一 展', type:'企画展', pri:2, init:'pre'},
+      {id:'a03', label:'10月31日〜11月16日', event:'サイトユフジ 展', type:'企画展', pri:2, init:'pre'},
       {id:'a04', label:'12月12日〜26年1月25日', event:'富岡鉄斎 紅花商人ゆかりの長谷川コレクション展', type:'企画展', pri:3, init:'sdone'},
     ]
   },
@@ -821,11 +968,11 @@ const FACILITIES = [
     confTag:'fc-confirmed', confLabel:'✅ ファクトチェック済み',
     note:'エリア設定：半径400m（霞城公園含む）。公式サイト：yamagata-museum.jp。最優先調査日：11月3日（文化の日・連休）広域来場者多。次点：8月上旬の土曜日（夏休みファミリー）。',
     events:[
-      {id:'ms01', label:'5月31日〜8月31日', event:'プライム企画展「さくらんぼ〜山形県民、挑戦の結実〜」', type:'企画展', pri:2, init:'todo'},
-      {id:'ms02', label:'7月20日（日）', event:'国宝土偶「縄文の女神」展示解説会', type:'解説イベント', pri:3, init:'todo'},
-      {id:'ms03', label:'8月2日（土）', event:'特別イベント', type:'特別イベント', pri:2, init:'todo'},
-      {id:'ms04', label:'8月10日（日）', event:'国宝土偶「縄文の女神」展示解説会', type:'解説イベント', pri:3, init:'todo'},
-      {id:'ms05', label:'9月27日〜12月14日', event:'やまはくセレクション展', type:'企画展', pri:2, init:'todo'},
+      {id:'ms01', label:'5月31日〜8月31日', event:'プライム企画展「さくらんぼ〜山形県民、挑戦の結実〜」', type:'企画展', pri:2, init:'pre'},
+      {id:'ms02', label:'7月20日（日）', event:'国宝土偶「縄文の女神」展示解説会', type:'解説イベント', pri:3, init:'pre'},
+      {id:'ms03', label:'8月2日（土）', event:'特別イベント', type:'特別イベント', pri:2, init:'pre'},
+      {id:'ms04', label:'8月10日（日）', event:'国宝土偶「縄文の女神」展示解説会', type:'解説イベント', pri:3, init:'pre'},
+      {id:'ms05', label:'9月27日〜12月14日', event:'やまはくセレクション展', type:'企画展', pri:2, init:'pre'},
       {id:'ms06', label:'11月3日（月・祝）', event:'国宝土偶「縄文の女神」展示解説会（文化の日）', type:'解説イベント', pri:3, init:'sdone'},
     ]
   },
@@ -835,10 +982,101 @@ const FACILITIES = [
     confTag:'fc-partial', confLabel:'⚠️ 一部確認済み',
     note:'エリア設定：参考調査（優先度は低め）。村山・置賜との比較データとして有用。公式サイト：https://takugin-tact-tsuruoka.jp/　秋以降のイベント情報は要確認。',
     events:[
-      {id:'t01', label:'2月9日（日）', event:'スキマスイッチ 2024-2025 全国ツアー', type:'音楽コンサート', pri:3, init:'sdone'},
+      {id:'t01', label:'2月9日（日）', event:'スキマスイッチ 2024-2025 全国ツアー', type:'音楽コンサート', pri:3, init:'pre'},
       {id:'t02', label:'秋以降（要確認）', event:'要公式HP確認', type:'未確認', pri:2, init:'pre'},
     ]
   },
+];
+
+const PERSONAS = [
+  {
+    id: 'p01',
+    name: '週末遠征型ミドルシニア',
+    origin: '宮城県・福島県・埼玉県',
+    purpose: 'コンサート・音楽イベント観覧',
+    behavior: '公演後に飲食・宿泊。悪天候でも来場するロイヤリティ高め。2日間連続公演にも参加。',
+    potential: '山形市七日町周辺の飲食・温泉（天童・上山・蔵王）への周遊誘導が有効。',
+    evidence: 'やまぎん県民ホール：浜田省吾公演（10/26〜27）、郷ひろみ（6/29）',
+    status: 'confirmed'
+  },
+  {
+    id: 'p02',
+    name: 'GW家族連れ観光客',
+    origin: '山形県内・宮城県・福島県',
+    purpose: 'エンタメ・クラシック・文化体験',
+    behavior: '20代〜10代以下が突出。開演前から周辺観光。滞在時間が長い層が一定数存在。',
+    potential: '霞城公園・文翔館・県立博物館との周遊セット提案。',
+    evidence: 'やまぎん県民ホール：ディズニーオン・クラシック（11/2）、山形交響楽団（4/29）',
+    status: 'review'
+  },
+  {
+    id: 'p03',
+    name: 'アウェイ遠征サポーター',
+    origin: '試合対戦相手のホームタウン（千葉・茨城・静岡・埼玉等）',
+    purpose: 'サッカー観戦（アウェイ応援）',
+    behavior: '遠距離のため宿泊を伴う可能性が高い。試合後の周遊は現状少ない。天童温泉・市街地への誘導余地あり。',
+    potential: 'アウェイゲート付近でのQRアンケート・観光情報配布が最短アプローチ。',
+    evidence: 'NDスタ：ジェフ千葉戦（7/12・千葉940人）、水戸戦（8/10・茨城1,064人）、いわき戦（8/16・福島1,187人）',
+    status: 'review'
+  },
+  {
+    id: 'p04',
+    name: '日帰り文化鑑賞層',
+    origin: '山形市・天童市・東根市など30km圏内',
+    purpose: '美術展・博物館・文化公演の鑑賞',
+    behavior: '1〜2時間滞在が中心。50〜60代が主力。車来場が多い。公演後の周遊行動は少ない。',
+    potential: '周辺施設との連携割引・スタンプラリー等で滞在延長を促進。',
+    evidence: '山形美術館：古代エジプト展（7〜8月）、県立博物館：縄文の女神解説会（11/3）',
+    status: 'draft'
+  }
+];
+
+const OTHER_EVENTS = [
+  {
+    id: 'oe01',
+    date: '2025年通年',
+    name: 'シンクローカル連携（試合後動線可視化）',
+    type: 'スポーツ',
+    area: '天童市',
+    memo: '6・7月の試合後の動線をシンクローカルと共同で可視化する予定。',
+    status: 'active'
+  },
+  {
+    id: 'oe02',
+    date: '2025年通年',
+    name: 'LINEを活用した観光情報発信',
+    type: '行政施策',
+    area: '山形県全域',
+    memo: 'Jリーグ68,000ID（うちアウェイ23,000）へのPR検討。旅前・旅中アプローチ。',
+    status: 'review'
+  },
+  {
+    id: 'oe03',
+    date: '2025年通年',
+    name: 'アウェイゲートQRアンケート設置',
+    type: 'スポーツ',
+    area: 'NDソフトスタジアム山形',
+    memo: '今年からアウェイゲートを新設。回答者に抽選プレゼント。移動手段・宿泊の把握に活用。',
+    status: 'review'
+  },
+  {
+    id: 'oe04',
+    date: '未定',
+    name: 'タッチパネル式アンケート（スタジアム設置）',
+    type: 'スポーツ',
+    area: 'NDソフトスタジアム山形',
+    memo: 'AIカメラ連動で来場者属性に合わせた質問を自動表示。企業名露出も可能。',
+    status: 'draft'
+  },
+  {
+    id: 'oe05',
+    date: '未定',
+    name: '置賜エリア×山形市連携コンテンツ検討',
+    type: '連携候補',
+    area: '置賜エリア・山形市',
+    memo: '米沢から山形まで2時間圏内という訴求で、置賜からの来場誘導施策を検討。',
+    status: 'draft'
+  }
 ];
 
 /* ============================================================
@@ -852,10 +1090,30 @@ const SURV_CYCLE  = ['pre','mid','ana','sdone'];
 const SURV_LABELS = {pre:'調査前', mid:'調査中', ana:'分析中', sdone:'完了'};
 const SURV_ICONS  = {pre:'📅', mid:'📊', ana:'🔬', sdone:'✅'};
 
-const KEY_DOC   = 'prtl_doc_v3';
-const KEY_MONTE = 'prtl_monte_v3';
-const KEY_CULT  = 'prtl_cult_v3';
-const KEY_TS    = 'prtl_ts';
+const PERSONA_CYCLE  = ['draft','review','confirmed'];
+const PERSONA_LABELS = {draft:'仮設定', review:'検討中', confirmed:'確定'};
+const PERSONA_ICONS  = {draft:'🖊️', review:'🔍', confirmed:'✅'};
+const PERSONA_CLASS  = {draft:'p-draft', review:'p-review', confirmed:'p-confirmed'};
+
+const OTHER_CYCLE   = ['draft','review','active','done'];
+const OTHER_LBL     = {draft:'未着手', review:'検討中', active:'対応中', done:'完了'};
+const OTHER_ICONS   = {draft:'⬜', review:'🔍', active:'🔄', done:'✅'};
+const OTHER_CLASS   = {draft:'o-draft', review:'o-review', active:'o-active', done:'o-done'};
+
+const TYPE_CLASS = {
+  '観光':     'type-tour',
+  'スポーツ': 'type-sports',
+  '食・農業': 'type-food',
+  '連携候補': 'type-collab',
+  '行政施策': 'type-policy'
+};
+
+const KEY_DOC     = 'prtl_doc_v3';
+const KEY_MONTE   = 'prtl_monte_v3';
+const KEY_CULT    = 'prtl_cult_v3';
+const KEY_PERSONA = 'prtl_persona_v3';
+const KEY_OTHER   = 'prtl_other_v3';
+const KEY_TS      = 'prtl_ts';
 
 /* ============================================================
    STATE
@@ -875,6 +1133,18 @@ let monteState = loadOrInit(KEY_MONTE, () => {
 let cultState = loadOrInit(KEY_CULT, () => {
   const s = {};
   FACILITIES.forEach(f => f.events.forEach(e => { s[e.id] = e.init; }));
+  return s;
+});
+
+let personaState = loadOrInit(KEY_PERSONA, () => {
+  const s = {};
+  PERSONAS.forEach(p => { s[p.id] = p.status; });
+  return s;
+});
+
+let otherState = loadOrInit(KEY_OTHER, () => {
+  const s = {};
+  OTHER_EVENTS.forEach(e => { s[e.id] = e.status; });
   return s;
 });
 
@@ -1175,6 +1445,114 @@ document.getElementById('cultReset').addEventListener('click', () => {
 });
 
 /* ============================================================
+   TAB 4 : PERSONA
+============================================================ */
+function renderPersonas() {
+  const grid = document.getElementById('personaGrid');
+  grid.innerHTML = '';
+  PERSONAS.forEach(p => {
+    const st = personaState[p.id];
+    const card = document.createElement('div');
+    card.className = 'persona-card';
+
+    const head = document.createElement('div');
+    head.className = 'persona-head';
+    head.innerHTML = `<h3 class="persona-name">${escapeHtml(p.name)}</h3>`;
+    const badge = document.createElement('button');
+    badge.className = 'badge ' + PERSONA_CLASS[st];
+    badge.textContent = `${PERSONA_ICONS[st]} ${PERSONA_LABELS[st]}`;
+    badge.addEventListener('click', () => cyclePersona(p.id));
+    head.appendChild(badge);
+    card.appendChild(head);
+
+    const fields = [
+      ['主な来訪元',       p.origin],
+      ['来訪目的',         p.purpose],
+      ['行動特性',         p.behavior],
+      ['周遊ポテンシャル', p.potential],
+    ];
+    fields.forEach(([label, val]) => {
+      const row = document.createElement('div');
+      row.className = 'persona-field';
+      row.innerHTML = `<div class="persona-label">${escapeHtml(label)}</div><div class="persona-value">${escapeHtml(val)}</div>`;
+      card.appendChild(row);
+    });
+
+    const ev = document.createElement('div');
+    ev.className = 'persona-evidence';
+    ev.innerHTML = `<b>根拠となる調査：</b>${escapeHtml(p.evidence)}`;
+    card.appendChild(ev);
+
+    grid.appendChild(card);
+  });
+}
+
+function cyclePersona(id) {
+  const cur = personaState[id];
+  const idx = PERSONA_CYCLE.indexOf(cur);
+  personaState[id] = PERSONA_CYCLE[(idx + 1) % PERSONA_CYCLE.length];
+  save(KEY_PERSONA, personaState);
+  touchTimestamp();
+  renderPersonas();
+}
+
+/* ============================================================
+   TAB 5 : OTHER EVENTS
+============================================================ */
+function renderOthers() {
+  const body = document.getElementById('otherBody');
+  body.innerHTML = '';
+  OTHER_EVENTS.forEach((e, i) => {
+    const st = otherState[e.id];
+    const typeClass = TYPE_CLASS[e.type] || 'type-policy';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><span style="color:var(--muted);font-size:12px;">${i+1}</span></td>
+      <td><span class="date-cell">${escapeHtml(e.date)}</span></td>
+      <td><span style="font-weight:600;">${escapeHtml(e.name)}</span></td>
+      <td><span class="type-tag ${typeClass}">${escapeHtml(e.type)}</span></td>
+      <td><span class="area-cell">${escapeHtml(e.area)}</span></td>
+      <td><span class="memo-cell">${escapeHtml(e.memo)}</span></td>
+    `;
+    const td = document.createElement('td');
+    const b = document.createElement('button');
+    b.className = 'badge ' + OTHER_CLASS[st];
+    b.textContent = `${OTHER_ICONS[st]} ${OTHER_LBL[st]}`;
+    b.addEventListener('click', () => cycleOther(e.id));
+    td.appendChild(b);
+    tr.appendChild(td);
+    body.appendChild(tr);
+  });
+  updateOtherProgress();
+}
+
+function cycleOther(id) {
+  const cur = otherState[id];
+  const idx = OTHER_CYCLE.indexOf(cur);
+  otherState[id] = OTHER_CYCLE[(idx + 1) % OTHER_CYCLE.length];
+  save(KEY_OTHER, otherState);
+  touchTimestamp();
+  renderOthers();
+}
+
+function updateOtherProgress() {
+  const total = OTHER_EVENTS.length;
+  const done = OTHER_EVENTS.filter(e => otherState[e.id] === 'done').length;
+  document.getElementById('otherProgText').textContent = `${done}/${total}`;
+  document.getElementById('otherProgBar').style.width = total ? `${(done/total*100).toFixed(1)}%` : '0%';
+}
+
+document.getElementById('otherReset').addEventListener('click', () => {
+  if (!confirm('その他・イベントのステータスをすべて初期値に戻しますか？')) return;
+  const s = {};
+  OTHER_EVENTS.forEach(e => { s[e.id] = e.status; });
+  otherState = s;
+  save(KEY_OTHER, otherState);
+  touchTimestamp();
+  renderOthers();
+});
+
+/* ============================================================
    TABS
 ============================================================ */
 document.querySelectorAll('.tab-btn').forEach(btn => {
@@ -1207,6 +1585,8 @@ renderDocs();
 renderMonte();
 renderFacilityFilter();
 renderFacilities();
+renderPersonas();
+renderOthers();
 </script>
 
 </body>
