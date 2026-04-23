@@ -338,6 +338,37 @@
   .badge:hover { filter: brightness(1.15); transform: translateY(-1px); }
   .badge:active { transform: translateY(0); }
 
+  /* =============== Read-only mode =============== */
+  body.read-only .badge {
+    cursor: default;
+    pointer-events: none;
+  }
+  body.read-only .badge:hover {
+    filter: none;
+    transform: none;
+  }
+  body.read-only .reset-btn { display: none !important; }
+  .mode-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 11px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    border: 1px solid;
+  }
+  .mode-badge.view {
+    background: rgba(110,118,129,0.18);
+    color: #c9d1d9;
+    border-color: rgba(110,118,129,0.45);
+  }
+  .mode-badge.edit {
+    background: rgba(227,179,65,0.18);
+    color: var(--st-wip);
+    border-color: rgba(227,179,65,0.45);
+  }
+
   .badge.done { background: rgba(63,185,80,0.18); color: var(--st-done); border-color: rgba(63,185,80,0.45); }
   .badge.wip  { background: rgba(227,179,65,0.18); color: var(--st-wip); border-color: rgba(227,179,65,0.45); }
   .badge.fix  { background: rgba(247,129,102,0.18); color: var(--st-fix); border-color: rgba(247,129,102,0.45); }
@@ -599,6 +630,7 @@
     </div>
     <div class="header-right">
       <span class="jv-badge">◆ 共同企業体（JV）</span>
+      <span class="mode-badge view" id="modeBadge">👁 閲覧モード</span>
       <span class="last-update" id="lastUpdate">最終更新: ─</span>
     </div>
   </div>
@@ -1080,6 +1112,21 @@ const OTHER_EVENTS = [
 ];
 
 /* ============================================================
+   READ-ONLY MODE (default ON; pass ?edit=1 to enable editing)
+============================================================ */
+const READ_ONLY = new URLSearchParams(location.search).get('edit') !== '1';
+if (READ_ONLY) {
+  document.body.classList.add('read-only');
+} else {
+  const mb = document.getElementById('modeBadge');
+  if (mb) {
+    mb.classList.remove('view');
+    mb.classList.add('edit');
+    mb.textContent = '✏ 編集モード';
+  }
+}
+
+/* ============================================================
    STATE CYCLES
 ============================================================ */
 const DOC_CYCLE   = ['todo','wip','fix','wait','done'];
@@ -1218,6 +1265,7 @@ function renderDocs() {
 }
 
 function cycleDoc(docId, org) {
+  if (READ_ONLY) return;
   const cur = docState[docId][org];
   const idx = DOC_CYCLE.indexOf(cur);
   docState[docId][org] = DOC_CYCLE[(idx + 1) % DOC_CYCLE.length];
@@ -1285,6 +1333,7 @@ function renderMonte() {
 }
 
 function cycleMonte(id) {
+  if (READ_ONLY) return;
   const cur = monteState[id];
   const idx = SURV_CYCLE.indexOf(cur);
   monteState[id] = SURV_CYCLE[(idx + 1) % SURV_CYCLE.length];
@@ -1416,6 +1465,7 @@ function renderFacilities() {
 }
 
 function cycleCult(id) {
+  if (READ_ONLY) return;
   const cur = cultState[id];
   const idx = SURV_CYCLE.indexOf(cur);
   cultState[id] = SURV_CYCLE[(idx + 1) % SURV_CYCLE.length];
@@ -1488,6 +1538,7 @@ function renderPersonas() {
 }
 
 function cyclePersona(id) {
+  if (READ_ONLY) return;
   const cur = personaState[id];
   const idx = PERSONA_CYCLE.indexOf(cur);
   personaState[id] = PERSONA_CYCLE[(idx + 1) % PERSONA_CYCLE.length];
@@ -1527,6 +1578,7 @@ function renderOthers() {
 }
 
 function cycleOther(id) {
+  if (READ_ONLY) return;
   const cur = otherState[id];
   const idx = OTHER_CYCLE.indexOf(cur);
   otherState[id] = OTHER_CYCLE[(idx + 1) % OTHER_CYCLE.length];
